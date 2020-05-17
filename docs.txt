@@ -1,0 +1,5 @@
+My mcu written under the board:
+cp2102
+
+My mcu in arduino IDE:
+NodeMCU 0.9 (ESP-12 Module)

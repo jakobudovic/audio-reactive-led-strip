@@ -94,7 +94,7 @@ g_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
 b_filt = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
                        alpha_decay=0.1, alpha_rise=0.5)
 common_mode = dsp.ExpFilter(np.tile(0.01, config.N_PIXELS // 2),
-                       alpha_decay=0.99, alpha_rise=0.01)
+                            alpha_decay=0.99, alpha_rise=0.01)
 p_filt = dsp.ExpFilter(np.tile(1, (3, config.N_PIXELS // 2)),
                        alpha_decay=0.1, alpha_rise=0.99)
 p = np.tile(1.0, (3, config.N_PIXELS // 2))
@@ -172,19 +172,20 @@ def visualize_spectrum(y):
     r = np.concatenate((r[::-1], r))
     g = np.concatenate((g[::-1], g))
     b = np.concatenate((b[::-1], b))
-    output = np.array([r, g,b]) * 255
+    output = np.array([r, g, b]) * 255
     return output
 
 
 fft_plot_filter = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
-                         alpha_decay=0.5, alpha_rise=0.99)
+                                alpha_decay=0.5, alpha_rise=0.99)
 mel_gain = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
                          alpha_decay=0.01, alpha_rise=0.99)
 mel_smoothing = dsp.ExpFilter(np.tile(1e-1, config.N_FFT_BINS),
-                         alpha_decay=0.5, alpha_rise=0.99)
+                              alpha_decay=0.5, alpha_rise=0.99)
 volume = dsp.ExpFilter(config.MIN_VOLUME_THRESHOLD,
                        alpha_decay=0.02, alpha_rise=0.02)
-fft_window = np.hamming(int(config.MIC_RATE / config.FPS) * config.N_ROLLING_HISTORY)
+fft_window = np.hamming(int(config.MIC_RATE / config.FPS)
+                        * config.N_ROLLING_HISTORY)
 prev_fps_update = time.time()
 
 
@@ -196,7 +197,7 @@ def microphone_update(audio_samples):
     y_roll[:-1] = y_roll[1:]
     y_roll[-1, :] = np.copy(y)
     y_data = np.concatenate(y_roll, axis=0).astype(np.float32)
-    
+
     vol = np.max(np.abs(y_data))
     if vol < config.MIN_VOLUME_THRESHOLD:
         print('No audio input. Volume below threshold. Volume:', vol)
@@ -226,7 +227,8 @@ def microphone_update(audio_samples):
         led.update()
         if config.USE_GUI:
             # Plot filterbank output
-            x = np.linspace(config.MIN_FREQUENCY, config.MAX_FREQUENCY, len(mel))
+            x = np.linspace(config.MIN_FREQUENCY,
+                            config.MAX_FREQUENCY, len(mel))
             mel_curve.setData(x=x, y=fft_plot_filter.update(mel))
             # Plot the color channels
             r_curve.setData(y=led.pixels[0])
@@ -234,7 +236,7 @@ def microphone_update(audio_samples):
             b_curve.setData(y=led.pixels[2])
     if config.USE_GUI:
         app.processEvents()
-    
+
     if config.DISPLAY_FPS:
         fps = frames_per_second()
         if time.time() - 0.5 > prev_fps_update:
@@ -259,11 +261,11 @@ if __name__ == '__main__':
         # Create GUI window
         app = QtGui.QApplication([])
         view = pg.GraphicsView()
-        layout = pg.GraphicsLayout(border=(100,100,100))
+        layout = pg.GraphicsLayout(border=(100, 100, 100))
         view.setCentralItem(layout)
         view.show()
         view.setWindowTitle('Visualization')
-        view.resize(800,600)
+        view.resize(800, 600)
         # Mel filterbank plot
         fft_plot = layout.addPlot(title='Filterbank Output', colspan=3)
         fft_plot.setRange(yRange=[-0.1, 1.2])
@@ -297,6 +299,7 @@ if __name__ == '__main__':
         # Frequency range label
         freq_label = pg.LabelItem('')
         # Frequency slider
+
         def freq_slider_change(tick):
             minf = freq_slider.tickValue(0)**2.0 * (config.MIC_RATE / 2.0)
             maxf = freq_slider.tickValue(1)**2.0 * (config.MIC_RATE / 2.0)
@@ -306,8 +309,10 @@ if __name__ == '__main__':
             config.MAX_FREQUENCY = maxf
             dsp.create_mel_bank()
         freq_slider = pg.TickSliderItem(orientation='bottom', allowAdd=False)
-        freq_slider.addTick((config.MIN_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
-        freq_slider.addTick((config.MAX_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
+        freq_slider.addTick(
+            (config.MIN_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
+        freq_slider.addTick(
+            (config.MAX_FREQUENCY / (config.MIC_RATE / 2.0))**0.5)
         freq_slider.tickMoveFinished = freq_slider_change
         freq_label.setText('Frequency range: {} - {} Hz'.format(
             config.MIN_FREQUENCY,
@@ -315,18 +320,21 @@ if __name__ == '__main__':
         # Effect selection
         active_color = '#16dbeb'
         inactive_color = '#FFFFFF'
+
         def energy_click(x):
             global visualization_effect
             visualization_effect = visualize_energy
             energy_label.setText('Energy', color=active_color)
             scroll_label.setText('Scroll', color=inactive_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
+
         def scroll_click(x):
             global visualization_effect
             visualization_effect = visualize_scroll
             energy_label.setText('Energy', color=inactive_color)
             scroll_label.setText('Scroll', color=active_color)
             spectrum_label.setText('Spectrum', color=inactive_color)
+
         def spectrum_click(x):
             global visualization_effect
             visualization_effect = visualize_spectrum

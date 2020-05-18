@@ -3,3 +3,17 @@ cp2102
 
 My mcu in arduino IDE:
 NodeMCU 0.9 (ESP-12 Module)
+
+Arduino IDE Console says:
+Chip is ESP8266EX
+
+Fixed jackbox:
+https://askubuntu.com/questions/224151/jack-server-could-not-be-started-when-using-qjackctl
+
+#include <NeoPixelBus.h> error:
+https://github.com/diyhue/Lights/issues/4
+
+Use pulse audio for managing sound
+
+Description of my LEDs:
+https://www.tinytronics.nl/shop/en/lighting/led-strips/ws2815-digital-5050-rgb-led-strip-60-leds-1m
